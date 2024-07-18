@@ -1,21 +1,14 @@
 class Solution:
     def isPalindrome(self, x: int) -> bool:
-        # eliminate cases that can not palindrome
-        if x < 0 or (x > 0 and x % 10 == 0):
+        # Handle negative numbers and trailing zeros
+        if x < 0 or (x % 10 == 0 and x != 0):
             return False
-        # process and compare x and reverse x
-        x_original = x # just a name
-        x_reverse = 0 # start x_reverse from 0
-        while x_original > 0:
-            num = x_original % 10 
-            x_reverse = x_reverse * 10 + num
-            x_original = (x_original - num) / 10
-        return x == x_reverse
-            
-            
-            
-            
-
-       
         
+        reversed_x = 0
+        while x > reversed_x:
+            reversed_x = reversed_x * 10 + x % 10
+            x //= 10
         
+        # Check if the original half is equal to the reversed half or
+        # if removing the last digit from reversed_x matches x for odd number of digits
+        return x == reversed_x or x == reversed_x // 10
