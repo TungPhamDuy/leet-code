@@ -1,17 +1,14 @@
 # Write your MySQL query statement below
 WITH CTE AS (
-    SELECT
-    U.PRODUCT_ID, 
-    ROUND(SUM(U.UNITS * P.PRICE)/SUM(U.UNITS),2) AS AVERAGE_PRICE
-    FROM UNITSSOLD U
-    LEFT JOIN PRICES P
-    ON U.PRODUCT_ID = P.PRODUCT_ID
-    AND U.PURCHASE_DATE >= P.START_DATE
-    AND U.PURCHASE_DATE <= P.END_DATE
-    GROUP BY U.PRODUCT_ID
+    SELECT U.*
+    , P.price
+    FROM UnitsSold U
+    LEFT JOIN Prices P 
+    ON U.product_id = P.product_id
+    WHERE U.purchase_date BETWEEN P.start_date AND P.end_date
 )
-SELECT P.PRODUCT_ID, COALESCE(C.AVERAGE_PRICE,0) AS AVERAGE_PRICE
-FROM PRICES P
+SELECT P.product_id, ROUND(COALESCE(SUM(C.units * C.price),0)/COALESCE(SUM(C.units),1),2) as average_price 
+FROM (SELECT DISTINCT product_id FROM Prices) P
 LEFT JOIN CTE C
-ON C.PRODUCT_ID = P.PRODUCT_ID
-GROUP BY P.PRODUCT_ID
+ON P.product_id = C.product_id
+GROUP BY P.product_id
