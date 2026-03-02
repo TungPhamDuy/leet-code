@@ -1,9 +1,8 @@
 # Write your MySQL query statement below
-WITH CTE AS (
-    SELECT *,
-    MIN(YEAR) OVER (PARTITION BY PRODUCT_ID) AS FIRST_YEAR
-    FROM SALES
+SELECT product_id, year as first_year, quantity, price
+FROM Sales
+WHERE (product_id, year) IN (
+    SELECT product_id, MIN(year)
+    FROM Sales
+    GROUP BY product_id
 )
-SELECT PRODUCT_ID, FIRST_YEAR, QUANTITY, PRICE
-FROM CTE
-WHERE YEAR = FIRST_YEAR
